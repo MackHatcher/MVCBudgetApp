@@ -7,6 +7,6 @@ namespace HouseholdBudgeterFrontEnd.Models
 {
     public class AuthenticationResponseModel
     {
-        public string access_tokem { get; set; }
+        public string access_token { get; set; }
     }
 }

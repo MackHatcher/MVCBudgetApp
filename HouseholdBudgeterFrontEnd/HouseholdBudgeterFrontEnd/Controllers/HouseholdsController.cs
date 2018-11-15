@@ -4,11 +4,13 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using HouseholdBudgeterFrontEnd.Helpers;
 using HouseholdBudgeterFrontEnd.Models;
 using HouseholdBudgeterFrontEnd.Models.Classes;
+using Newtonsoft.Json;
 
 namespace HouseholdBudgeterFrontEnd.Controllers
 {
@@ -20,10 +22,39 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         public ActionResult Index()
         {
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost/Households";
-            aspHelper.ASPHelperGet(url);
-            
-            return RedirectToAction("Index");
+            var url = "http://localhost:54102/api/household/ViewHousehold";
+            var result = aspHelper.ASPHelperGet(url);
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var households = JsonConvert
+                    .DeserializeObject<List<ViewHouseholdViewModel>>(jsonString);
+
+                return View(households);
+
+            }
+            return View();
+        }
+
+        public ActionResult IndexMembers()
+        {
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/household/ViewMembers";
+            var result = aspHelper.ASPHelperGet(url);
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var members = JsonConvert
+                    .DeserializeObject<List<HouseholdMembersViewModel>>(jsonString);
+
+                return View(members);
+
+            }
+            return View();
         }
 
         // GET: Households/Details/5
@@ -45,7 +76,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         public ActionResult Create()
         {
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost/Households/Create";
+            var url = "http://localhost:54102/api/household/create";
             aspHelper.ASPHelperGet(url);
             
             return View();
@@ -59,7 +90,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             if (ModelState.IsValid)
             {
                 ASPHelper aspHelper = new ASPHelper();
-                var url = "http://localhost:56527/Households/Create";
+                var url = "http://localhost:54102/api/household/create";
 
                 var createHousehold = new List<ReqParameters>();
 
@@ -68,7 +99,17 @@ namespace HouseholdBudgeterFrontEnd.Controllers
                 householdName.Value = household.Name;
                 createHousehold.Add(householdName);
                 
-                aspHelper.ASPHelperPost(url, createHousehold);
+                var result = aspHelper.ASPHelperPost(url, createHousehold);
+
+                if (result.StatusCode == HttpStatusCode.OK)
+                {
+                    var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                    var households = JsonConvert
+                        .DeserializeObject<ViewHouseholdViewModel>(jsonString);
+
+                    return View(households);
+                }
                 
                 return RedirectToAction("Index");
             }
@@ -85,7 +126,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
 
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/Invite";
+            var url = "http://localhost:54102/api/household/invite";
 
             var inviteHousehold = new List<ReqParameters>();
 
@@ -113,7 +154,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
 
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/Join";
+            var url = "http://localhost:54102/api/household/join";
 
             var JoinHousehold = new List<ReqParameters>();
 
@@ -136,7 +177,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
 
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/Leave";
+            var url = "http://localhost:54102/api/household/leave";
 
             var LeaveHousehold = new List<ReqParameters>();
 
@@ -159,7 +200,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
 
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/ViewMembers";
+            var url = "http://localhost:54102/api/household/view";
 
             var Members = new List<ReqParameters>();
 
@@ -198,7 +239,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
 
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/ViewMembers";
+            var url = "http://localhost:54102/api/household/view";
 
             var Members = new List<ReqParameters>();
 
@@ -226,7 +267,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
             
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/Edit";
+            var url = "http://localhost:54102/api/household/edit";
             aspHelper.ASPHelperGet(url);
             
             return RedirectToAction("Index");
@@ -242,7 +283,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             if (ModelState.IsValid)
             {
                 ASPHelper aspHelper = new ASPHelper();
-                var url = "http://localhost:56527/Households/Edit";
+                var url = "http://localhost:54102/api/household/edit";
 
                 var editHousehold = new List<ReqParameters>();
 
@@ -278,7 +319,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
             
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/Edit";
+            var url = "http://localhost:54102/api/household/delete";
             aspHelper.ASPHelperGet(url);
             
             return RedirectToAction("Index");
@@ -290,7 +331,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         public ActionResult DeleteConfirmed(int id, Household household)
         {
             ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Households/Delete";
+            var url = "http://localhost:54102/api/household/delete";
 
             var deleteHousehold = new List<ReqParameters>();
 

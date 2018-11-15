@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 
 namespace HouseholdBudgeterFrontEnd.Helpers
@@ -22,19 +23,39 @@ namespace HouseholdBudgeterFrontEnd.Helpers
             }
 
             var formEncodedValues = new FormUrlEncodedContent(parameters);
+            var cookie = HttpContext.Current.Request.Cookies["token"];
+            
 
-            var result = httpClient.PostAsync(url,
+            if (cookie != null)
+            {
+                var accessToken = cookie.Value;
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", accessToken);
+            }
+            
+                var result = httpClient.PostAsync(url,
                 formEncodedValues).Result;
+
 
             return result;
             }
 
         public HttpResponseMessage ASPHelperGet(string url)
         {
-            var httpClient = new HttpClient();
-                                   
-            var result = httpClient.GetAsync(url).Result;
 
+            var parameters = new List<KeyValuePair<string, string>>();
+            var formEncodedValues = new FormUrlEncodedContent(parameters);
+            var httpClient = new HttpClient();
+            var cookie = HttpContext.Current.Request.Cookies["token"];
+            if (cookie != null)
+            {
+                var accessToken = cookie.Value;
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", accessToken);
+            }
+
+            var result = httpClient.GetAsync(url).Result;
+            
             return result;
         }
 
@@ -43,6 +64,18 @@ namespace HouseholdBudgeterFrontEnd.Helpers
             var httpClient = new HttpClient();
             
             var result = httpClient.DeleteAsync(url).Result;
+
+            var parameters = new List<KeyValuePair<string, string>>();
+            var formEncodedValues = new FormUrlEncodedContent(parameters);
+            var cookie = HttpContext.Current.Request.Cookies["token"];
+
+
+            if (cookie != null)
+            {
+                var accessToken = cookie.Value;
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", accessToken);
+            }
 
             return result;
         }

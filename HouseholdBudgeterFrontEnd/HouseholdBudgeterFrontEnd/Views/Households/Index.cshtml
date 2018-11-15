@@ -1,39 +1,47 @@
-﻿@model IEnumerable<HouseholdBudgeterFrontEnd.Models.Classes.Household>
+﻿@model List<HouseholdBudgeterFrontEnd.Models.Classes.ViewHouseholdViewModel>
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Household Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Creator.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Creator.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<p>Find below the list of households that you have created</p>
+@if (User.Identity.IsAuthenticated)
+{
+    @Html.ActionLink("Create Household", "Create", "Household")
 }
 
-</table>
+
+
+@if (Model == null || !Model.Any())
+{
+    <p>You haven't created any households</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                Name
+            </tr>
+            <tr>
+                Number of Members
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var household in Model)
+            {
+                <tr>
+                    <td>
+                        @household.Name
+                    </td>
+                    <td>
+                        @household.NumberOfUsers
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

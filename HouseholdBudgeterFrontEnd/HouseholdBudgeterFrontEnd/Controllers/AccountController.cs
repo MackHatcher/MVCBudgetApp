@@ -12,6 +12,9 @@ using HouseholdBudgeterFrontEnd.Models;
 using HouseholdBudgeterFrontEnd.Helpers;
 using HouseholdBudgeterFrontEnd.Models.Classes;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace HouseholdBudgeterFrontEnd.Controllers
 {
@@ -69,7 +72,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginViewModel model)
+        public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -77,13 +80,47 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             }
 
             ASPHelper aspHelper = new ASPHelper();
+            
             var loginList = new List<ReqParameters>();
-            var url = "http://localhost:56527/token";
 
+            var userName = new ReqParameters();
+            userName.Name = "Username";
+            userName.Value = model.Email;
+            loginList.Add(userName);
 
-            aspHelper.ASPHelperPost(url, loginList);
+            var password = new ReqParameters();
+            password.Name = "Password";
+            password.Value = model.Password;
+            loginList.Add(password);
 
-            return View("Index");
+            var grantType = new ReqParameters();
+            grantType.Name = "Grant_type";
+            grantType.Value = "password";
+            loginList.Add(grantType);
+
+            var url = "http://localhost:54102/token";
+
+            var result = aspHelper.ASPHelperPost(url, loginList);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+                var authenticationInfo = JsonConvert
+                    .DeserializeObject<AuthenticationResponseModel>(jsonString);
+
+                var httpCookie = new HttpCookie("token", authenticationInfo.access_token);
+
+                Response.Cookies.Add(httpCookie);
+
+                return RedirectToLocal(returnUrl);
+            }
+            else
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+                ModelState.AddModelError("", "Invalid login attempt");
+                return View(model);
+            }
+            
         }
 
         //
@@ -132,11 +169,9 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
-        public ActionResult Register()
+        public ActionResult Register(string returnUrl)
         {
-            ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Account/Register";
-            aspHelper.ASPHelperGet(url);
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 

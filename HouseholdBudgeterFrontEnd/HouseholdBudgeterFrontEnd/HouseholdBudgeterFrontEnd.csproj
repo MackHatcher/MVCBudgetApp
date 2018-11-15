@@ -219,6 +219,7 @@
     <Compile Include="Models\Classes\TransactionBindingModel.cs" />
     <Compile Include="Models\Classes\Transactions.cs" />
     <Compile Include="Models\Classes\ViewHouseholdMembersBindingModel.cs" />
+    <Compile Include="Models\Classes\ViewHouseholdViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\TransactionModel.cs" />
@@ -289,6 +290,7 @@
     <Content Include="Views\Households\Details.cshtml" />
     <Content Include="Views\Households\Edit.cshtml" />
     <Content Include="Views\Households\Index.cshtml" />
+    <Content Include="Views\Households\IndexMembers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -24,6 +24,11 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    @if (Request.Cookies["token"] != null)
+                    {
+                        <li>@Html.ActionLink("View Households", "Index", "Households")</li>
+                        <li>@Html.ActionLink("View Members", "IndexMembers", "Households")</li>
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
