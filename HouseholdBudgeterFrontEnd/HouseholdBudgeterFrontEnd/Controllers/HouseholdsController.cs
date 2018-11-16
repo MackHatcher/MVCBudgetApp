@@ -100,16 +100,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
                 createHousehold.Add(householdName);
                 
                 var result = aspHelper.ASPHelperPost(url, createHousehold);
-
-                if (result.StatusCode == HttpStatusCode.OK)
-                {
-                    var jsonString = result.Content.ReadAsStringAsync().Result;
-
-                    var households = JsonConvert
-                        .DeserializeObject<ViewHouseholdViewModel>(jsonString);
-
-                    return View(households);
-                }
+                
                 
                 return RedirectToAction("Index");
             }
@@ -118,7 +109,49 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         }
 
         //GET: Households/Invite
-        public ActionResult Invite(InviteHouseholdBindingModel household)
+        public ActionResult Invite(int id)
+        {
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/household/inviteusers";
+            var result = aspHelper.ASPHelperGet(url);
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var households = JsonConvert
+                    .DeserializeObject<InviteHouseholdBindingModel>(jsonString);
+
+                return View(households);
+
+            }
+            return View();
+        }
+        
+        //GET: Households/InviteList
+        public ActionResult InviteList()
+        {
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/household/invitelist";
+            var result = aspHelper.ASPHelperGet(url);
+            
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var inviteList = JsonConvert
+                    .DeserializeObject<List<ViewInviteListViewModel>>(jsonString);
+
+                return View(inviteList);
+
+            }
+
+            return View();
+        }
+
+        //POST: Households/Invite
+        [HttpPost]
+        public ActionResult Invite(int id, InviteHouseholdBindingModel household)
         {
             if (!ModelState.IsValid)
             {
@@ -131,22 +164,23 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             var inviteHousehold = new List<ReqParameters>();
 
             var householdName = new ReqParameters();
-            householdName.Name = "Name";
+            householdName.Name = "Email";
             householdName.Value = household.Email;
             inviteHousehold.Add(householdName);
 
             var householdId = new ReqParameters();
-            householdId.Name = "Id";
-            household.HouseHoldId = Convert.ToInt32(householdId.Value);
+            householdId.Name = "HouseHoldId";
+            householdId.Value = id.ToString();
             inviteHousehold.Add(householdId);
-            
+
             aspHelper.ASPHelperPost(url, inviteHousehold);
 
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         //POST: Households/Join
-        public ActionResult Join(JoinHouseholdBindingModel household)
+        public ActionResult Join(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -160,7 +194,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
 
             var householdId = new ReqParameters();
             householdId.Name = "InviteId";
-            household.InviteId = Convert.ToInt32(householdId.Value);
+            householdId.Value = id.ToString();
             JoinHousehold.Add(householdId);
 
             aspHelper.ASPHelperPost(url, JoinHousehold);
@@ -168,8 +202,9 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
         //POST: Households/Leave
-        public ActionResult Leave(LeaveHouseholdBindingModel household)
+        public ActionResult Leave(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -182,8 +217,8 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             var LeaveHousehold = new List<ReqParameters>();
 
             var householdId = new ReqParameters();
-            householdId.Name = "Id";
-            household.HouseHoldId = Convert.ToInt32(householdId.Value);
+            householdId.Name = "HouseHoldId";
+            householdId.Value = id.ToString();
             LeaveHousehold.Add(householdId);
 
             aspHelper.ASPHelperPost(url, LeaveHousehold);
@@ -270,20 +305,21 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             var url = "http://localhost:54102/api/household/edit";
             aspHelper.ASPHelperGet(url);
             
-            return RedirectToAction("Index");
+            return View();
         }
 
+        
         // POST: Households/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,CreatorId")] Household household)
+        public ActionResult Edit(int id, Household household)
         {
             if (ModelState.IsValid)
             {
                 ASPHelper aspHelper = new ASPHelper();
-                var url = "http://localhost:54102/api/household/edit";
+                var url = "http://localhost:54102/api/household/edit?id=" + id;
 
                 var editHousehold = new List<ReqParameters>();
 
@@ -294,14 +330,9 @@ namespace HouseholdBudgeterFrontEnd.Controllers
 
                 var householdId = new ReqParameters();
                 householdId.Name = "Id";
-                household.Id = Convert.ToInt32(householdId.Value);
+                householdId.Value = id.ToString();
                 editHousehold.Add(householdId);
-
-                var householdCreatorId = new ReqParameters();
-                householdCreatorId.Name = "CreatorId";
-                household.Id = Convert.ToInt32(householdCreatorId.Value);
-                editHousehold.Add(householdCreatorId);
-
+                
                 aspHelper.ASPHelperPost(url, editHousehold);
                 
                 return RedirectToAction("Index");

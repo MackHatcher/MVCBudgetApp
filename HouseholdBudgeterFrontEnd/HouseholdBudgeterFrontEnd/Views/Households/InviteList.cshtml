@@ -1,0 +1,54 @@
+﻿@model List<HouseholdBudgeterFrontEnd.Models.Classes.ViewInviteListViewModel>
+@{
+    ViewBag.Title = "InviteList";
+}
+
+<h2>InviteList</h2>
+
+<p>Find below the list of households that you have created</p>
+
+
+
+
+
+
+@if (Model == null || !Model.Any())
+{
+    <p>You haven't created any households</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                Name of Household |
+            </tr>
+            
+
+        </thead>
+        <tbody>
+            @foreach (var invite in Model)
+            {
+                <tr>
+                    <td>
+                        @invite.Name
+                    </td>
+                    <td>
+                        @using (Html.BeginForm("Join", "Households", new { id = invite.InviteId }, FormMethod.Post, null))
+                        {
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Join" class="btn btn-default" />
+                                </div>
+                            </div>
+                        }
+                    </td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+

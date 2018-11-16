@@ -5,12 +5,11 @@
 }
 
 <h2>Household Index</h2>
-
+@Html.ActionLink("Create Household", "Create", "Households")
 <p>Find below the list of households that you have created</p>
-@if (User.Identity.IsAuthenticated)
-{
-    @Html.ActionLink("Create Household", "Create", "Household")
-}
+
+
+
 
 
 
@@ -23,25 +22,54 @@ else
     <table>
         <thead>
             <tr>
-                Name
+                <td>
+                    Name of Household
+                </td>
+                <td>
+                    Members
+                </td>
             </tr>
             <tr>
-                Number of Members
+                
             </tr>
+            
         </thead>
         <tbody>
             @foreach (var household in Model)
             {
-                <tr>
-                    <td>
-                        @household.Name
-                    </td>
-                    <td>
-                        @household.NumberOfUsers
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    @household.Name
+                </td>
+                <td>
+                    @household.Members
+                </td>
+                <td>
+                    @Html.ActionLink("Members", "ViewMembers", "Households", new { id = household.Id }, null)
+                
+                </td>
+                <td>
+                    @Html.ActionLink("Invite", "Invite", "Households", new { id = household.Id }, null)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", "Households", new { id = household.Id }, null)
+                </td>
+                <td>
+                    @using (Html.BeginForm("Leave", "Households", new { id = household.Id }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Leave" class="btn btn-default" />
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
             }
         </tbody>
     </table>
+
 }
 

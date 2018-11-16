@@ -9,6 +9,6 @@ namespace HouseholdBudgeterFrontEnd.Models.Classes
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int NumberOfUsers { get; set; }
+        public int Members { get; set; }
     }
 }

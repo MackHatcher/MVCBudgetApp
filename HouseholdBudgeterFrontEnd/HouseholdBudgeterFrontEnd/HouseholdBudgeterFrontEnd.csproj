@@ -198,6 +198,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -206,6 +207,7 @@
     <Compile Include="Models\AuthenticationResponseModel.cs" />
     <Compile Include="Models\Classes\Account.cs" />
     <Compile Include="Models\Classes\Categories.cs" />
+    <Compile Include="Models\Classes\ChangePasswordBindingModel.cs" />
     <Compile Include="Models\Classes\CreateHouseholdBindingModel.cs" />
     <Compile Include="Models\Classes\CreateHouseholdViewModel.cs" />
     <Compile Include="Models\Classes\Household.cs" />
@@ -218,8 +220,10 @@
     <Compile Include="Models\Classes\StandardCategories.cs" />
     <Compile Include="Models\Classes\TransactionBindingModel.cs" />
     <Compile Include="Models\Classes\Transactions.cs" />
+    <Compile Include="Models\Classes\UserInviteViewModel.cs" />
     <Compile Include="Models\Classes\ViewHouseholdMembersBindingModel.cs" />
     <Compile Include="Models\Classes\ViewHouseholdViewModel.cs" />
+    <Compile Include="Models\Classes\ViewInviteListViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\TransactionModel.cs" />
@@ -231,6 +235,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Custom.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -278,7 +283,7 @@
     <Content Include="Views\Account\SendCode.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
     <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
-    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
@@ -291,6 +296,13 @@
     <Content Include="Views\Households\Edit.cshtml" />
     <Content Include="Views\Households\Index.cshtml" />
     <Content Include="Views\Households\IndexMembers.cshtml" />
+    <Content Include="Views\Households\Invite.cshtml" />
+    <Content Include="Views\Households\InviteList.cshtml" />
+    <Content Include="Views\Transactions\Create.cshtml" />
+    <Content Include="Views\Transactions\Delete.cshtml" />
+    <Content Include="Views\Transactions\Details.cshtml" />
+    <Content Include="Views\Transactions\Edit.cshtml" />
+    <Content Include="Views\Transactions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

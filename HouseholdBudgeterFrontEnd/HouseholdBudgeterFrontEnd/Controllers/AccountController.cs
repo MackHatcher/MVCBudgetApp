@@ -123,6 +123,49 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ChangePassword()
+        {
+            
+            return View();
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(ChangePasswordBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/Account/ChangePassword";
+
+            var changePassList = new List<ReqParameters>();
+            var oldPass = new ReqParameters();
+            oldPass.Name = "OldPassword";
+            oldPass.Value = model.OldPassword;
+            changePassList.Add(oldPass);
+
+            var newPass = new ReqParameters();
+            newPass.Name = "NewPassword";
+            newPass.Value = model.NewPassword;
+            changePassList.Add(newPass);
+
+            var confirmPass = new ReqParameters();
+            confirmPass.Name = "ConfirmPassword";
+            confirmPass.Value = model.ConfirmPassword;
+            changePassList.Add(confirmPass);
+            aspHelper.ASPHelperPost(url, changePassList);
+
+            return RedirectToAction("Index", "Home");
+        }
+
         //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
@@ -185,7 +228,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             if (ModelState.IsValid)
             {
                 ASPHelper aspHelper = new ASPHelper();
-                var url = "http://localhost:56527/Account/Register";
+                var url = "http://localhost:54102/api/Account/Register";
 
                 var registerList = new List<ReqParameters>();
                 var email = new ReqParameters();
@@ -228,9 +271,6 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
-            ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Account/ForgotPassword";
-            aspHelper.ASPHelperGet(url);
             return View();
         }
 
@@ -244,7 +284,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             if (ModelState.IsValid)
             {
                 ASPHelper aspHelper = new ASPHelper();
-                var url = "http://localhost:56527/Account/ForgotPassword";
+                var url = "http://localhost:54102/api/Account/ForgotPassword";
 
                 var forgotPassList = new List<ReqParameters>();
                 var email = new ReqParameters();
@@ -253,7 +293,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
                 forgotPassList.Add(email);
 
                 aspHelper.ASPHelperPost(url, forgotPassList);
-                return View("Index");
+                return View();
             }
 
             // If we got this far, something failed, redisplay form
@@ -276,39 +316,7 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
-        // POST: /Account/ResetPassword
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ResetPassword(ResetPasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            ASPHelper aspHelper = new ASPHelper();
-            var url = "http://localhost:56527/Account/ResetPassword";
-
-            var passwordList = new List<ReqParameters>();
-            var email = new ReqParameters();
-            email.Name = "Email";
-            email.Value = model.Email;
-            passwordList.Add(email);
-            var password = new ReqParameters();
-            password.Name = "Password";
-            password.Value = model.Password;
-            passwordList.Add(password);
-            var confirmPassword = new ReqParameters();
-            confirmPassword.Name = "ConfirmPassword";
-            confirmPassword.Value = model.Password;
-            passwordList.Add(confirmPassword);
-            aspHelper.ASPHelperPost(url, passwordList);
-
-            return View();
-        }
-
-        //
+       
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
@@ -434,9 +442,15 @@ namespace HouseholdBudgeterFrontEnd.Controllers
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            var cookie = Request.Cookies["token"];
+
+            cookie.Expires = DateTime.Now.AddMonths(-1);
+
+            Response.Cookies.Add(cookie);
+            
             return RedirectToAction("Index", "Home");
         }
 

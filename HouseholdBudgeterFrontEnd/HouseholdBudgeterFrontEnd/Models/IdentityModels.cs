@@ -33,5 +33,11 @@ namespace HouseholdBudgeterFrontEnd.Models
         public System.Data.Entity.DbSet<HouseholdBudgeterFrontEnd.Models.Classes.Household> Households { get; set; }
 
         public System.Data.Entity.DbSet<HouseholdBudgeterFrontEnd.Models.ApplicationUser> ApplicationUsers { get; set; }
+
+        public System.Data.Entity.DbSet<HouseholdBudgeterFrontEnd.Models.Classes.Transactions> Transactions { get; set; }
+
+        public System.Data.Entity.DbSet<HouseholdBudgeterFrontEnd.Models.Classes.Account> Accounts { get; set; }
+
+        public System.Data.Entity.DbSet<HouseholdBudgeterFrontEnd.Models.Classes.Categories> Categories { get; set; }
     }
 }
