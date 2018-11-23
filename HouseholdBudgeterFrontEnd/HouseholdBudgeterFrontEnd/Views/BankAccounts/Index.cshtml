@@ -1,0 +1,74 @@
+﻿@model IEnumerable<HouseholdBudgeterFrontEnd.Models.Classes.ViewBankAccountsViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Bank Account Index</h2>
+
+
+@Html.ActionLink("Create Bank Account", "Create", "BankAccounts", new { id = ViewContext.RouteData.Values["id"] }, null)
+
+
+<p>Find below the list of bank accounts associated with this household.</p>
+
+
+
+
+
+
+@if (Model == null || !Model.Any())
+{
+    <p>You haven't created any bank accounts.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Name of Household
+                </td>
+                <td>
+                    Accounts
+                </td>
+            </tr>
+            <tr></tr>
+
+        </thead>
+        <tbody>
+            @foreach (var account in Model)
+            {
+                <tr>
+                    <td>
+                        @account.HouseHolds
+                    </td>
+                    <td>
+                        @account.Name
+                    </td>
+                    <td>
+                        @Html.ActionLink("Transactions", "IndexAccounts", "Transactions", new { id = account.Id, AccountId = account.AccountId }, null)
+
+                    </td>
+                    
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", "BankAccounts", new { id = account.Id }, null)
+                    </td>
+                    <td>
+                        @using (Html.BeginForm("Delete", "BankAccounts", new { id = account.Id }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Delete" class="btn btn-default" />
+                                </div>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+

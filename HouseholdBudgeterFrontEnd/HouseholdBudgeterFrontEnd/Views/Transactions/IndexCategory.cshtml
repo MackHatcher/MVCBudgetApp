@@ -1,0 +1,78 @@
+﻿@model IEnumerable<HouseholdBudgeterFrontEnd.Models.Classes.ViewTransactionsViewModel>
+@{
+    ViewBag.Title = "IndexCategory";
+}
+
+<h2>Transactions By Category</h2>
+
+<p>Find below the list of bank transactions that you have created</p>
+
+
+
+
+
+
+@if (Model == null || !Model.Any())
+{
+    <p>You haven't created any transactions.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Accounts
+                </td>
+                <td>
+                    Description
+                </td>
+                <td>
+                    Amount
+                </td>
+                <td>
+                    Void Status
+                </td>
+                <td>
+                    Void
+                </td>
+            </tr>
+            <tr></tr>
+
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <td>
+                        @transaction.Account
+                    </td>
+                    <td>
+                        @transaction.Description
+                    </td>
+                    <td>
+                        @transaction.Amount
+                    </td>
+                    <td>
+                        @transaction.IsVoided
+                    </td>
+                    <td>
+                        @if (transaction.IsVoided == false)
+                        {
+                            using (Html.BeginForm("Void", "Transactions", new { id = transaction.Id }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Void" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

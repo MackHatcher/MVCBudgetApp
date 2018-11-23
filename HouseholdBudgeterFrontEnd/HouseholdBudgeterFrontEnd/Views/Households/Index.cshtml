@@ -46,7 +46,7 @@ else
                 </td>
                 <td>
                     @Html.ActionLink("Members", "ViewMembers", "Households", new { id = household.Id }, null)
-                
+
                 </td>
                 <td>
                     @Html.ActionLink("Invite", "Invite", "Households", new { id = household.Id }, null)
@@ -54,6 +54,16 @@ else
 
                 <td>
                     @Html.ActionLink("Edit", "Edit", "Households", new { id = household.Id }, null)
+                </td>
+                <td>
+                    @Html.ActionLink("Bank Accounts", "Index", "BankAccounts", new { id = household.Id }, null)
+                </td>
+                <td>
+                    @Html.ActionLink("Categories", "Index", "Categories", new { id = household.Id }, null)
+                </td>
+                <td>
+                    @Html.ActionLink("Transactions", "Index", "Transactions", new { id = household.Id }, null)
+
                 </td>
                 <td>
                     @using (Html.BeginForm("Leave", "Households", new { id = household.Id }))
@@ -66,6 +76,7 @@ else
                         </div>
                     }
                 </td>
+                
             </tr>
             }
         </tbody>

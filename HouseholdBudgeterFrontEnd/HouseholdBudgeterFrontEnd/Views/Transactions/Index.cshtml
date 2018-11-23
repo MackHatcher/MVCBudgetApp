@@ -1,81 +1,79 @@
-﻿@model IEnumerable<HouseholdBudgeterFrontEnd.Models.Classes.Transactions>
+﻿@model IEnumerable<HouseholdBudgeterFrontEnd.Models.Classes.ViewTransactionsViewModel>
 
 @{
     ViewBag.Title = "Index";
 }
+<h2>Transactions</h2>
+@Html.ActionLink("New Transaction", "Create", "Transactions", new { id = ViewContext.RouteData.Values["id"] }, null)
+<p>Find below the list of bank transactions that you have created</p>
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Account.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Category.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EnteredBy.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Amount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReconAmount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Income)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsVoided)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Account.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Category.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EnteredBy.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Amount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReconAmount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Income)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsVoided)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+
+
+
+@if (Model == null || !Model.Any())
+{
+    <p>You haven't created any transactions.</p>
 }
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Categories
+                </td>
+                <td>
+                    Description
+                </td>
+                <td>
+                    Amount
+                </td>
+                <td>
+                    Void Status
+                </td>
+                <td>
+                    Void
+                </td>
+            </tr>
+            <tr></tr>
 
-</table>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+            <tr>
+                <td>
+                    @transaction.CategoryName
+                </td>
+                <td>
+                    @transaction.Description
+                </td>
+                <td>
+                    @transaction.Amount
+                </td>
+                <td>
+                    @transaction.IsVoided
+                </td>
+                <td>
+                    @if (transaction.IsVoided == false)
+                    {
+                        using (Html.BeginForm("Void", "Transactions", new { id = transaction.Id }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Void" class="btn btn-default" />
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+}

@@ -1,0 +1,68 @@
+﻿@model IEnumerable<HouseholdBudgeterFrontEnd.Models.Classes.ViewCategoriesViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Category Index</h2>
+
+<p>
+    @Html.ActionLink("Create Category", "Create", "Categories", new { id = ViewContext.RouteData.Values["id"] }, null)
+</p>
+
+<p>Find below the list of categories that you have created</p>
+
+
+
+
+
+
+@if (Model == null || !Model.Any())
+{
+    <p>You haven't created any categories.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Name of Category
+                </td>
+                
+            </tr>
+            <tr></tr>
+
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>
+                        @category.Name
+                    </td>
+                    
+                    <td>
+                        @Html.ActionLink("View Transactions", "IndexCategory", "Transactions", new { id = category.Id, CategoryId = category.CategoryId }, null)
+
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", "Categories", new { id = category.Id }, null)
+                    </td>
+                    <td>
+                        @using (Html.BeginForm("Delete", "Categories", new { id = category.Id }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Delete" class="btn btn-default" />
+                                </div>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}

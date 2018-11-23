@@ -195,6 +195,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BankAccountsController.cs" />
+    <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -206,10 +208,19 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AuthenticationResponseModel.cs" />
     <Compile Include="Models\Classes\Account.cs" />
+    <Compile Include="Models\Classes\AccountsViewModel.cs" />
+    <Compile Include="Models\Classes\ApiError.cs" />
     <Compile Include="Models\Classes\Categories.cs" />
+    <Compile Include="Models\Classes\CategoriesViewModel.cs" />
     <Compile Include="Models\Classes\ChangePasswordBindingModel.cs" />
+    <Compile Include="Models\Classes\CreateAccountBindingModel.cs" />
+    <Compile Include="Models\Classes\CreateCategoriesBindingModel.cs" />
     <Compile Include="Models\Classes\CreateHouseholdBindingModel.cs" />
     <Compile Include="Models\Classes\CreateHouseholdViewModel.cs" />
+    <Compile Include="Models\Classes\CreateTransactionBindingModel.cs" />
+    <Compile Include="Models\Classes\EditAccountsBindingModel.cs" />
+    <Compile Include="Models\Classes\EditCategoriesBindingModel.cs" />
+    <Compile Include="Models\Classes\EditTransactionBindingModel.cs" />
     <Compile Include="Models\Classes\Household.cs" />
     <Compile Include="Models\Classes\HouseholdInvite.cs" />
     <Compile Include="Models\Classes\HouseholdMembersViewModel.cs" />
@@ -220,10 +231,14 @@
     <Compile Include="Models\Classes\StandardCategories.cs" />
     <Compile Include="Models\Classes\TransactionBindingModel.cs" />
     <Compile Include="Models\Classes\Transactions.cs" />
+    <Compile Include="Models\Classes\TransactionViewModel.cs" />
     <Compile Include="Models\Classes\UserInviteViewModel.cs" />
+    <Compile Include="Models\Classes\ViewBankAccountsViewModel.cs" />
+    <Compile Include="Models\Classes\ViewCategoriesViewModel.cs" />
     <Compile Include="Models\Classes\ViewHouseholdMembersBindingModel.cs" />
     <Compile Include="Models\Classes\ViewHouseholdViewModel.cs" />
     <Compile Include="Models\Classes\ViewInviteListViewModel.cs" />
+    <Compile Include="Models\Classes\ViewTransactionsViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\TransactionModel.cs" />
@@ -303,6 +318,19 @@
     <Content Include="Views\Transactions\Details.cshtml" />
     <Content Include="Views\Transactions\Edit.cshtml" />
     <Content Include="Views\Transactions\Index.cshtml" />
+    <Content Include="Views\Categories\Create.cshtml" />
+    <Content Include="Views\Categories\Delete.cshtml" />
+    <Content Include="Views\Categories\Details.cshtml" />
+    <Content Include="Views\Categories\Edit.cshtml" />
+    <Content Include="Views\Categories\Index.cshtml" />
+    <Content Include="Views\BankAccounts\Create.cshtml" />
+    <Content Include="Views\BankAccounts\Delete.cshtml" />
+    <Content Include="Views\BankAccounts\Details.cshtml" />
+    <Content Include="Views\BankAccounts\Edit.cshtml" />
+    <Content Include="Views\BankAccounts\Index.cshtml" />
+    <Content Include="Views\BankAccounts\UpdateBalance.cshtml" />
+    <Content Include="Views\Transactions\IndexAccounts.cshtml" />
+    <Content Include="Views\Transactions\IndexCategory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

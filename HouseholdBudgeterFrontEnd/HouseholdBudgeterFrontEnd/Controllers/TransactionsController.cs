@@ -6,8 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using HouseholdBudgeterFrontEnd.Helpers;
 using HouseholdBudgeterFrontEnd.Models;
 using HouseholdBudgeterFrontEnd.Models.Classes;
+using Newtonsoft.Json;
 
 namespace HouseholdBudgeterFrontEnd.Controllers
 {
@@ -15,59 +17,155 @@ namespace HouseholdBudgeterFrontEnd.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        [HttpGet]
         // GET: Transactions
-        public ActionResult Index()
+        public ActionResult Index(int id)
         {
-            var transactions = db.Transactions.Include(t => t.Account).Include(t => t.Category).Include(t => t.EnteredBy);
-            return View(transactions.ToList());
-        }
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/transactions/view/" + id;
+            var result = aspHelper.ASPHelperGet(url);
+            var cookie = Request.Cookies["token"];
 
-        // GET: Transactions/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
+            if (cookie == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login", "Account");
             }
-            Transactions transactions = db.Transactions.Find(id);
-            if (transactions == null)
-            {
-                return HttpNotFound();
-            }
-            return View(transactions);
-        }
 
-        // GET: Transactions/Create
-        public ActionResult Create()
-        {
-            ViewBag.AccountId = new SelectList(db.Accounts, "Id", "Name");
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name");
-            ViewBag.EnteredById = new SelectList(db.ApplicationUsers, "Id", "Email");
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var transactions = JsonConvert
+                    .DeserializeObject<List<ViewTransactionsViewModel>>(jsonString);
+
+                return View(transactions);
+            }
             return View();
         }
-        
-        // POST: Transactions/Create
-        
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(int id, CreateTransactionBindingModel transactions)
+
+        [HttpGet]
+        // GET: Transactions
+        public ActionResult IndexAccounts(int id, int AccountId)
         {
-            if (!ModelState.IsValid)
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/transactions/viewaccounts/" + id + "?accountId=" + AccountId;
+            var result = aspHelper.ASPHelperGet(url);
+            var cookie = Request.Cookies["token"];
+
+            if (cookie == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Login", "Account");
             }
 
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var transactions = JsonConvert
+                    .DeserializeObject<List<ViewTransactionsViewModel>>(jsonString);
+
+                return View(transactions);
+            }
+            return View();
+        }
+
+        [HttpGet]
+        // GET: Transactions
+        public ActionResult IndexCategory(int id, int CategoryId)
+        {
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/transactions/viewaccounts/" + id + "?categoryId=" + CategoryId;
+            var result = aspHelper.ASPHelperGet(url);
+            var cookie = Request.Cookies["token"];
+
+            if (cookie == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var transactions = JsonConvert
+                    .DeserializeObject<List<ViewTransactionsViewModel>>(jsonString);
+
+                return View(transactions);
+            }
+            return View();
+        }
+
+        [HttpGet]
+        // GET: Transactions/Create
+        public ActionResult Create(int id)
+        {
+            ASPHelper aspHelper = new ASPHelper();
+
+            var urlCategoryList = "http://localhost:54102/api/transactions/view/getcategorylist/" + id;
+            var urlAccountList = "http://localhost:54102/api/transactions/view/getaccountlist/" + id;
+
+            var accountResult = aspHelper.ASPHelperGet(urlAccountList);
+            var categoryResult = aspHelper.ASPHelperGet(urlCategoryList);
+
+            if (accountResult.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = accountResult.Content.ReadAsStringAsync().Result;
+
+                var transactions = JsonConvert
+                    .DeserializeObject<List<ViewBankAccountsViewModel>>(jsonString);
+
+                var selectAccount = new SelectList(transactions, "Id", "Name");
+
+                ViewBag.selectAccount = selectAccount;
+
+            }
+
+            if (categoryResult.StatusCode == HttpStatusCode.OK)
+            {
+                var jsonString = categoryResult.Content.ReadAsStringAsync().Result;
+
+                var transactions = JsonConvert
+                    .DeserializeObject<List<ViewCategoriesViewModel>>(jsonString);
+
+                var selectCategory = new SelectList(transactions, "Id", "Name");
+
+                ViewBag.selectCategory = selectCategory;
+            }
+
+            return View();
+        }
+
+        // POST: Transactions/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(int id, Transactions transactions)
+        {
+
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/transactions/create";
             var CreateTransactionList = new List<ReqParameters>();
+            var cookie = Request.Cookies["token"];
+
 
             var TransactionId = new ReqParameters();
-            TransactionId.Name = "AccountId";
+            TransactionId.Name = "Id";
             TransactionId.Value = id.ToString();
             CreateTransactionList.Add(TransactionId);
 
-            var TransactionDescription = new ReqParameters();
-            TransactionDescription.Name = "Description";
-            TransactionDescription.Value = transactions.Description;
-            CreateTransactionList.Add(TransactionDescription);
+            var AccountId = new ReqParameters();
+            AccountId.Name = "AccountId";
+            AccountId.Value = transactions.AccountId.ToString();
+            CreateTransactionList.Add(AccountId);
+
+            var Description = new ReqParameters();
+            Description.Name = "Description";
+            Description.Value = transactions.Description;
+            CreateTransactionList.Add(Description);
+
+            var CategoryId = new ReqParameters();
+            CategoryId.Name = "CategoryId";
+            CategoryId.Value = transactions.CategoryId.ToString();
+            CreateTransactionList.Add(CategoryId);
 
             var TransactionDate = new ReqParameters();
             TransactionDate.Name = "Date";
@@ -78,65 +176,139 @@ namespace HouseholdBudgeterFrontEnd.Controllers
             TransactionAmount.Name = "Amount";
             TransactionAmount.Value = transactions.Amount.ToString();
             CreateTransactionList.Add(TransactionAmount);
-            
-            return View(transactions);
+
+            var result = aspHelper.ASPHelperPost(url, CreateTransactionList);
+
+            if (cookie == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return RedirectToAction("Index");
+            }
+
+            else if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var jsonString = result.Content.ReadAsStringAsync().Result;
+
+                var errorMessage = JsonConvert
+                    .DeserializeObject<ApiError>(jsonString);
+
+                foreach (var property in errorMessage.ModelState)
+                {
+                    foreach (var msg in property.Value)
+                    {
+                        ModelState.AddModelError("", msg);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Something went wrong. Please try again later.");
+            }
+
+            return RedirectToAction("Index/" + id);
+
         }
 
+        [HttpGet]
         // GET: Transactions/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            var cookie = Request.Cookies["token"];
+
+            if (cookie == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login", "Account");
             }
 
-            return View();
+            if (id == null)
+            {
+                return RedirectToAction("Index", "HouseHold");
+            }
+
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/Transactions/Edit/" + id;
+            aspHelper.ASPHelperGet(url);
+
+            return RedirectToAction("Index/" + id);
         }
 
-        // POST: Transactions/Edit/5
         
+        // POST: Transactions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Transactions transactions)
+        public ActionResult Edit(int id, EditTransactionBindingModel transactions)
         {
+            var cookie = Request.Cookies["token"];
+
+            if (cookie == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             if (!ModelState.IsValid)
             {
-                return HttpNotFound();
+                return View();
             }
 
+            ASPHelper aspHelper = new ASPHelper();
+            var url = "http://localhost:54102/api/transactions/edit";
             var EditTransaction = new List<ReqParameters>();
 
-            var TransactionId = new ReqParameters();
-            TransactionId.Name = "TransactionId";
-            TransactionId.Value = transactions.;
-            EditTransaction.Add(TransactionId);
+            var TransactionDescription = new ReqParameters();
+            TransactionDescription.Name = "Description";
+            TransactionDescription.Value = transactions.Description;
+            EditTransaction.Add(TransactionDescription);
+
+            var TransactionAmount = new ReqParameters();
+            TransactionAmount.Name = "Amount";
+            TransactionAmount.Value = transactions.Amount.ToString();
+            EditTransaction.Add(TransactionAmount);
+
+            aspHelper.ASPHelperPost(url, EditTransaction);
 
             return View(transactions);
         }
 
-        // GET: Transactions/Delete/5
-        public ActionResult Delete(int? id)
+        [HttpPost]
+        //POST: Transactions/Void
+        public ActionResult Void(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Transactions transactions = db.Transactions.Find(id);
-            if (transactions == null)
-            {
-                return HttpNotFound();
-            }
-            return View(transactions);
-        }
+            var cookie = Request.Cookies["token"];
 
-        // POST: Transactions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Transactions transactions = db.Transactions.Find(id);
-            db.Transactions.Remove(transactions);
-            db.SaveChanges();
+            if (cookie == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            if (ModelState.IsValid)
+            {
+                ASPHelper aspHelper = new ASPHelper();
+                var url = "http://localhost:54102/api/transactions/void/" + id;
+                var VoidTransaction = new List<ReqParameters>();
+
+                var VoidId = new ReqParameters();
+                VoidId.Name = "TransactionId";
+                VoidId.Value = id.ToString();
+                VoidTransaction.Add(VoidId);
+
+                aspHelper.ASPHelperPost(url, VoidTransaction);
+
+                return RedirectToAction("Index/" + id);
+            }
             return RedirectToAction("Index");
         }
 
